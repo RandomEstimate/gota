@@ -34,7 +34,34 @@ func (r RollingWindow) StdDev() (s Series) {
 	return
 }
 
+// Quantile 计算分位数 p >= 0 <= 1
+func (r RollingWindow) Quantile(p float64) (s Series) {
+	s = New([]float64{}, Float, "Quantile")
+	for _, block := range r.getBlocks() {
+		s.Append(block.Quantile(p))
+	}
+
+	return
+}
+
 func (r RollingWindow) getBlocks() (blocks []Series) {
+	for i := 1; i <= r.series.Len(); i++ {
+		if i < r.window {
+			blocks = append(blocks, r.series.Empty())
+			continue
+		}
+
+		index := []int{}
+		for j := i - r.window; j < i; j++ {
+			index = append(index, j)
+		}
+		blocks = append(blocks, r.series.Subset(index))
+	}
+
+	return
+}
+
+func (r RollingWindow) GetBlocks() (blocks []Series) {
 	for i := 1; i <= r.series.Len(); i++ {
 		if i < r.window {
 			blocks = append(blocks, r.series.Empty())

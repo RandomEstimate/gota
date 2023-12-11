@@ -83,3 +83,20 @@ func TestSeries_RollingStdDev(t *testing.T) {
 		}
 	}
 }
+
+func TestRollingWindow_Quantile(t *testing.T) {
+
+	tmp := make([]float64, 0)
+	for i := 0; i < 1000; i++ {
+		tmp = append(tmp, float64(i))
+	}
+
+	series := New(tmp, Float, "COL")
+
+	quantile := series.Rolling(100).Quantile(0.8)
+
+	if quantile.Elem(99).Float() != 79 {
+		t.Errorf("无法正常进行滑动分位数计算")
+	}
+
+}
