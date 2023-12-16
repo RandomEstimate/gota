@@ -44,6 +44,26 @@ func (r RollingWindow) Quantile(p float64) (s Series) {
 	return
 }
 
+// Max 计算最大值
+func (r RollingWindow) Max(p float64) (s Series) {
+	s = New([]float64{}, Float, "Max")
+	for _, block := range r.getBlocks() {
+		s.Append(block.Max())
+	}
+
+	return
+}
+
+// Min 计算最大值
+func (r RollingWindow) Min(p float64) (s Series) {
+	s = New([]float64{}, Float, "Min")
+	for _, block := range r.getBlocks() {
+		s.Append(block.Min())
+	}
+
+	return
+}
+
 func (r RollingWindow) getBlocks() (blocks []Series) {
 	for i := 1; i <= r.series.Len(); i++ {
 		if i < r.window {

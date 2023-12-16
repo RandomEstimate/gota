@@ -58,6 +58,12 @@ func (s Series) Shift(n int) Series {
 // Diff 对Series序列进行差分
 func (s Series) Diff(n int) Series {
 	newSeries := New([]float64{}, Float, "Diff")
+
+	if s.Type() != Float {
+		newSeries.Err = fmt.Errorf("Series Type is not float. ")
+		return newSeries
+	}
+
 	for _, block := range s.Rolling(int(math.Abs(float64(n)) + 1)).getBlocks() {
 		if block.Len() == 0 {
 			newSeries.Append(math.NaN())
@@ -99,4 +105,78 @@ func (s Series) Reverse() {
 		i++
 		j--
 	}
+}
+
+// Add 序列之间的向量 加
+func Add(s1 Series, s2 Series) (s Series) {
+	s = New([]float64{}, Float, "Add")
+
+	if s1.Len() != s2.Len() {
+		s.Err = fmt.Errorf("Series length error. ")
+		return
+	}
+
+	if s1.Type() != Float {
+		s.Err = fmt.Errorf("Series Type is not float. ")
+		return
+	}
+
+	for i := 0; i < s1.Len(); i++ {
+		s.Append(s1.Elem(i).Float() + s2.Elem(i).Float())
+	}
+
+	return
+}
+
+// Sub 序列之间的向量 减
+func Sub(s1 Series, s2 Series) (s Series) {
+	s = New([]float64{}, Float, "Sub")
+
+	if s1.Len() != s2.Len() {
+		s.Err = fmt.Errorf("Series length error. ")
+		return
+	}
+
+	if s1.Type() != Float {
+		s.Err = fmt.Errorf("Series Type is not float. ")
+		return
+	}
+
+	for i := 0; i < s1.Len(); i++ {
+		s.Append(s1.Elem(i).Float() - s2.Elem(i).Float())
+	}
+
+	return
+}
+
+// Multiply 序列之间的向量 减
+func Multiply(s1 Series, s2 Series) (s Series) {
+	s = New([]float64{}, Float, "Multiply")
+
+	if s1.Len() != s2.Len() {
+		s.Err = fmt.Errorf("Series length error. ")
+		return
+	}
+
+	for i := 0; i < s1.Len(); i++ {
+		s.Append(s1.Elem(i).Float() * s2.Elem(i).Float())
+	}
+
+	return
+}
+
+// Div 序列之间的向量 减
+func Div(s1 Series, s2 Series) (s Series) {
+	s = New([]float64{}, Float, "Div")
+
+	if s1.Len() != s2.Len() {
+		s.Err = fmt.Errorf("Series length error. ")
+		return
+	}
+
+	for i := 0; i < s1.Len(); i++ {
+		s.Append(s1.Elem(i).Float() / s2.Elem(i).Float())
+	}
+
+	return
 }
