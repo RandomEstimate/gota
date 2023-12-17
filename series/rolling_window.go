@@ -64,6 +64,16 @@ func (r RollingWindow) Min() (s Series) {
 	return
 }
 
+// Sum 计算最大值
+func (r RollingWindow) Sum() (s Series) {
+	s = New([]float64{}, Float, "Min")
+	for _, block := range r.getBlocks() {
+		s.Append(block.Sum())
+	}
+
+	return
+}
+
 func (r RollingWindow) getBlocks() (blocks []Series) {
 	for i := 1; i <= r.series.Len(); i++ {
 		if i < r.window {
